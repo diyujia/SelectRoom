@@ -2,6 +2,8 @@ package com.example.diyujia.selectroom;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,7 +27,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import com.example.diyujia.util.NetUtil;
-import com.example.diyujia.bean.UserInformation;
+import com.example.diyujia.bean.UserInfo;
+import com.example.diyujia.selectroom.UserInformation;
 
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
@@ -72,7 +75,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
             public void handleMessage(Message msg){
                 switch (msg.what){
                     case 0:
+                        //保存userid，每次登陆成功以后，都将userid改为编辑模式，然后修改user的值
+                        SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("userid",eUsername.getText().toString());
+                        editor.commit();
                         Toast.makeText(MainActivity.this,"登陆成功",Toast.LENGTH_LONG).show();
+                        Intent i = new Intent(MainActivity.this,UserInformation.class);
+                        startActivity(i);
                         break;
                     default:
                         Dialog alertDialog = new AlertDialog.Builder(MainActivity.this).
@@ -121,6 +131,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         final String address = "https://api.mysspku.com/index.php/V1/MobileCourse/Login?username="
                 +Username+"&password="+Password;
         Log.d("SelectRoom",address);
+        final String userid = Username;
         //String resultCon = null;
         new Thread(new Runnable() {
             @Override
@@ -171,7 +182,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 }
             }
         }).start();
-        //return resultCon;
     }
 
     /**

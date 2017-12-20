@@ -4,7 +4,7 @@ package com.example.diyujia.bean;
  * Created by diyujia on 2017/12/16.
  */
 
-public class UserInformation {
+public class UserInfo {
     private String uName;
     private String uID;
     private String uGrade;
