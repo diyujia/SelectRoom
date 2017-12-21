@@ -1,8 +1,14 @@
 package com.example.diyujia.selectroom;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,13 +17,24 @@ import android.widget.TextView;
 import android.widget.EditText;
 
 import com.example.diyujia.bean.Pickers;
+import com.example.diyujia.bean.UserInfo;
 import com.example.diyujia.views.PickerScrollView;
 import com.example.diyujia.views.PickerScrollView.onSelectListener;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
+
+import javax.net.ssl.HttpsURLConnection;
+import static com.example.diyujia.selectroom.MainActivity.DO_NOT_VERIFY;
 
 /**
  * Created by diyujia on 2017/12/20.
@@ -60,6 +77,8 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
     private int SelectNum;
     private int SelectBuilding;
     private SharedPreferences sharedPreferences;
+    private Button bt_commit;
+    private Handler mHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -69,6 +88,45 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
         initView();
         initLinstener();
         initData();
+
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                switch (msg.what){
+                    case 0:
+                        Dialog alertDialog1 = new AlertDialog.Builder(UserSelectRoom.this).
+                                setTitle("恭喜：").
+                                setMessage("选宿舍成功").
+                                setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //确定按钮，点击可取消提示框
+                                        //这里点击确定以后回到个人信息页面，并且关闭其他所有activity
+                                        Intent intent = new Intent();
+                                        intent.setClass(UserSelectRoom.this, UserInformation.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                    }
+                                }).
+                                create();
+                        alertDialog1.show();
+                        break;
+                    default:
+                        Dialog alertDialog = new AlertDialog.Builder(UserSelectRoom.this).
+                                setTitle("提示").
+                                setMessage("选宿舍失败，错误代码："+msg.what).
+                                setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //确定按钮，点击可取消提示框
+                                    }
+                                }).
+                                create();
+                        alertDialog.show();
+                        break;
+                }
+            }
+        };
     }
 
     @Override
@@ -83,6 +141,8 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
             picker_rel_building.setVisibility(View.VISIBLE);
         }else if(view.getId() == R.id.picker_yes_building){ //选择宿舍楼滚轮中的确定按钮，点击以后控件消失
             picker_rel_building.setVisibility(View.GONE);
+        }else if(view.getId() == R.id.select_commit){
+            selectCommit();
         }
     }
 
@@ -115,6 +175,8 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
         select_stu2_code_input = (EditText) findViewById(R.id.select_stu2_code_input);
         select_stu3_code = (TextView)findViewById(R.id.select_stu3_code);
         select_stu3_code_input = (EditText) findViewById(R.id.select_stu3_code_input);
+
+        bt_commit = (Button)findViewById(R.id.select_commit);
     }
     private void initLinstener() {
         bt_scrollNum.setOnClickListener(this);
@@ -124,6 +186,7 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
         bt_scrollNum_building.setOnClickListener(this);
         pickerscrollview_building.setOnSelectListener(pickerListener_building);
         bt_yes_building.setOnClickListener(this);
+        bt_commit.setOnClickListener(this);
     }
     private void initData() {
         select_nameTv.setText("姓名："+sharedPreferences.getString("Name",null));
@@ -175,6 +238,82 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
             bt_scrollNum_building.setText(pickers.getShowConetnt());
         }
     };
+
+    private void selectCommit(){
+        new Thread(new Runnable() {
+            @Override
+            public void run(){
+                String address_url = "https://api.mysspku.com/index.php/V1/MobileCourse/SelectRoom";
+                try{
+                    URL url = new URL(address_url);
+                    MainActivity.trustAllHosts();
+                    HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+                    con.setHostnameVerifier(DO_NOT_VERIFY);
+                    con.setRequestMethod("POST");
+                    con.setReadTimeout(8000);
+                    con.setConnectTimeout(8000);
+
+                    String num = Integer.toString(SelectNum);
+                    String stuid = sharedPreferences.getString("userid",null);
+                    String stu1id = select_stu1_id_input.getText().toString();
+                    String v1code = select_stu1_code_input.getText().toString();
+                    String stu2id = select_stu2_id_input.getText().toString();
+                    String v2code = select_stu2_code_input.getText().toString();
+                    String stu3id = select_stu3_id_input.getText().toString();
+                    String v3code = select_stu3_code_input.getText().toString();
+                    String buildingNo = Integer.toString(SelectBuilding);
+                    String post_data = "num=" + num +
+                            "&stuid=" + stuid +
+                            "&stu1id=" + stu1id +
+                            "&v1code=" + v1code +
+                            "&stu2id=" + stu2id +
+                            "&v2code=" + v2code +
+                            "&stu3id=" + stu3id +
+                            "&v3code=" + v3code +
+                            "&buildingNo=" + buildingNo;
+                    con.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                    con.setRequestProperty("Content-Length",post_data.length()+"");
+                    //设置打开输出流
+                    con.setDoOutput(true);
+                    //拿到输出流
+                    OutputStream os = con.getOutputStream();
+                    //使用输出流向服务器提交数据
+                    os.write(post_data.getBytes());
+                    if(con.getResponseCode() == 200){
+                        InputStream in = con.getInputStream();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                        StringBuilder response = new StringBuilder();
+                        String str;
+                        while ((str = reader.readLine()) != null) {
+                            response.append(str);
+                            Log.d("SelectRoom",str);
+                        }
+                        String responseStr = response.toString();
+                        Log.d("SelectRoom",responseStr);
+                        //获取json中的错误信息，以及数据信息
+                        int resultConInt = new JSONObject(responseStr).getInt("errcode");
+                        String resultCon = Integer.toString(resultConInt);
+                        Log.d("SelectRoom",resultCon);
+                        Message msg = new Message();
+                        if(resultConInt == 0){
+                            msg.what = 0;
+                            mHandler.sendMessage(msg);
+                            return;//如果返回的错误代码为0，说明登陆成功
+                        }else{
+                            msg.what = resultConInt;
+                            mHandler.sendMessage(msg);
+                            return;
+                        }
+                    }
+
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        ).start();
+    }
 
     //用来设置同住人1、2、3的可见与否
     private void setClassmate(){

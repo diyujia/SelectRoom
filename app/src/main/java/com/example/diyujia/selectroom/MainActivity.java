@@ -84,6 +84,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                         Toast.makeText(MainActivity.this,"登陆成功",Toast.LENGTH_LONG).show();
                         Intent i = new Intent(MainActivity.this,UserInformation.class);
                         startActivity(i);
+                        finish();
                         break;
                     default:
                         Dialog alertDialog = new AlertDialog.Builder(MainActivity.this).
