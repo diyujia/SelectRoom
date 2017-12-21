@@ -46,7 +46,10 @@ public class UserInformation extends Activity implements View.OnClickListener{
     private Handler mHandler;
     private Button bQuery;
     private Button bSelect;
-    private int sexQuery;//用来标志性别，查询空床位
+    private String sexQuery;//用来标志性别，查询空床位
+    private String NameShare;//用来存储办理入住人名称，方便显示
+
+    private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -58,7 +61,8 @@ public class UserInformation extends Activity implements View.OnClickListener{
         bSelect = (Button)findViewById(R.id.userinfo_information_select);
         bSelect.setOnClickListener(this);
         //获取主页面保存的userid信息
-        SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
+        //SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
         String userid = sharedPreferences.getString("userid",null);
         Log.d("SelectRoom","userinformation:userid="+userid);
 
@@ -76,12 +80,13 @@ public class UserInformation extends Activity implements View.OnClickListener{
                         useridTv.setText("学    号："+userinfo_Handler.getuID());
                         userNameTv = (TextView)findViewById(R.id.userinfo_information_name);
                         userNameTv.setText("姓    名："+userinfo_Handler.getuName());
+                        NameShare = userinfo_Handler.getuName();
                         userSexTv = (TextView)findViewById(R.id.userinfo_information_sex);
                         userSexTv.setText("性    别："+userinfo_Handler.getuSex());
                         if(userinfo_Handler.getuSex() == "男"){
-                            sexQuery = 1;
+                            sexQuery = "1";
                         }else{
-                            sexQuery = 2;
+                            sexQuery = "2";
                         }
                         userCodeTv = (TextView)findViewById(R.id.userinfo_information_code);
                         userCodeTv.setText("校验码："+userinfo_Handler.getuCode());
@@ -89,6 +94,8 @@ public class UserInformation extends Activity implements View.OnClickListener{
                         if(userinfo_Handler.getuRoom() == null){
                             userRoomTv.setText("宿舍号：您还没有选择宿舍！");
                         }else{
+                            //如果选择了宿舍，那么就把变量设置为已选择，并且存到sharepreferences中，另一个页面也可以获取
+
                             userRoomTv.setText("宿舍号："+userinfo_Handler.getuRoom());
                         }
                         userBuildingTv = (TextView)findViewById(R.id.userinfo_information_building);
@@ -102,6 +109,13 @@ public class UserInformation extends Activity implements View.OnClickListener{
                         userLocationTv.setText("校    区："+userinfo_Handler.getuLocation());
                         userGradeTv = (TextView)findViewById(R.id.userinfo_information_grade);
                         userGradeTv.setText("性    别："+userinfo_Handler.getuGrade());
+                        //将性别和名称存在sharedPreferences中
+                        SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("sexQuery",sexQuery);
+                        editor.putString("Name",NameShare);
+                        editor.putString("Room",userinfo_Handler.getuRoom());
+                        editor.commit();
                         break;
                     default:
                         Dialog alertDialog = new AlertDialog.Builder(UserInformation.this).
@@ -127,18 +141,37 @@ public class UserInformation extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View view){
         //查询空床位
-        Log.d("SelectRoom","查询空床位按钮");
         if(view.getId() == R.id.userinfo_information_query){
-            Log.d("SelectRoom","查询空床位按钮");
             if(NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE){
                 Log.d("SelectRoom","查询空床位按钮");
-                SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("sexQuery",Integer.toString(sexQuery));
-                editor.commit();
                 //调用UserLogin函数，请求登录的接口。
                 Intent i = new Intent(UserInformation.this,QueryBed.class);
                 startActivity(i);
+            }else{//如果网络连接不正常则显示“网络挂了”
+                Toast.makeText(UserInformation.this,"网络挂了！",Toast.LENGTH_LONG).show();
+            }
+        }
+        if(view.getId() == R.id.userinfo_information_select){
+            if(NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE){
+                Log.d("SelectRoom","办理入住按钮");
+                //调用UserLogin函数，请求登录的接口。
+                if(sharedPreferences.getString("Room",null) == null){
+                    Intent i = new Intent(UserInformation.this,UserSelectRoom.class);
+                    startActivity(i);
+                }else{
+                    Dialog alertDialog = new AlertDialog.Builder(UserInformation.this).
+                            setTitle("提示").
+                            setMessage("您已经办理入住，无需重复办理！").
+                            setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //确定按钮，点击可取消提示框
+                                }
+                            }).
+                            create();
+                    alertDialog.show();
+                }
+
             }else{//如果网络连接不正常则显示“网络挂了”
                 Toast.makeText(UserInformation.this,"网络挂了！",Toast.LENGTH_LONG).show();
             }
@@ -215,8 +248,5 @@ public class UserInformation extends Activity implements View.OnClickListener{
                 }
             }
         }).start();
-        //return resultCon;
-
-
     }
 }

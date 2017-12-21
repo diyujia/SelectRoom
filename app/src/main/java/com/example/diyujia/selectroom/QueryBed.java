@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,9 +13,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.diyujia.bean.BedInfo;
 import com.example.diyujia.bean.UserInfo;
+import com.example.diyujia.util.NetUtil;
 
 import org.json.JSONObject;
 
@@ -39,14 +42,17 @@ public class QueryBed extends Activity implements View.OnClickListener{
     private TextView query_9Tv;
     private TextView query_13Tv;
     private TextView query_14Tv;
+
+    private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.selectroom_querybed);
 
+        sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
         bSelect = (Button)findViewById(R.id.querybed_select);
         bSelect.setOnClickListener(this);
-        SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
+        //SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
         String userid = sharedPreferences.getString("userid",null);
         String querySex = sharedPreferences.getString("sexQuery",null);//获取到查询空床位的性别
         Log.d("SelectRoom","QueryBed:userid="+userid);
@@ -92,7 +98,31 @@ public class QueryBed extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View view){
+        if(view.getId() == R.id.querybed_select){
+            if(NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE){
+                Log.d("SelectRoom","办理入住按钮");
+                //调用UserLogin函数，请求登录的接口。
+                if(sharedPreferences.getString("Room",null) == null){
+                    Intent i = new Intent(QueryBed.this,UserSelectRoom.class);
+                    startActivity(i);
+                }else{
+                    Dialog alertDialog = new AlertDialog.Builder(QueryBed.this).
+                            setTitle("提示").
+                            setMessage("您已经办理入住，无需重复办理！").
+                            setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //确定按钮，点击可取消提示框
+                                }
+                            }).
+                            create();
+                    alertDialog.show();
+                }
 
+            }else{//如果网络连接不正常则显示“网络挂了”
+                Toast.makeText(QueryBed.this,"网络挂了！",Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void UpdateQueryBed(String querySex){

@@ -24,6 +24,9 @@
 
         <!--查询空床位的页面 -->
         <activity android:name=".QueryBed"/>
+
+        <!--选择宿舍界面 -->
+        <activity android:name=".UserSelectRoom"/>
     </application>
 
 </manifest>

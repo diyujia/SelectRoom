@@ -78,6 +78,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                         //保存userid，每次登陆成功以后，都将userid改为编辑模式，然后修改user的值
                         SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.clear();//每次登陆的时候清空之前保存的数据重新开始
                         editor.putString("userid",eUsername.getText().toString());
                         editor.commit();
                         Toast.makeText(MainActivity.this,"登陆成功",Toast.LENGTH_LONG).show();
