@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.EditText;
 
+import com.example.diyujia.bean.BedInfo;
 import com.example.diyujia.bean.Pickers;
 import com.example.diyujia.bean.UserInfo;
 import com.example.diyujia.views.PickerScrollView;
@@ -74,11 +75,13 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
 
     private TextView select_nameTv;
     private TextView select_idTv;
+    private String querySex;
     private int SelectNum;
     private int SelectBuilding;
     private SharedPreferences sharedPreferences;
     private Button bt_commit;
     private Handler mHandler;
+    private Handler building_handler;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -127,6 +130,8 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
                 }
             }
         };
+
+
     }
 
     @Override
@@ -135,14 +140,28 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
             picker_rel.setVisibility(View.VISIBLE);
         }else if(view.getId() == R.id.picker_yes){//选择人数确定按钮，点击以后给出相应的填写框
             picker_rel.setVisibility(View.GONE);
-
             setClassmate();
         }else if(view.getId() == R.id.select_building_input){//选择宿舍楼按钮，点击以后空间出现。
             picker_rel_building.setVisibility(View.VISIBLE);
         }else if(view.getId() == R.id.picker_yes_building){ //选择宿舍楼滚轮中的确定按钮，点击以后控件消失
             picker_rel_building.setVisibility(View.GONE);
         }else if(view.getId() == R.id.select_commit){
-            selectCommit();
+            String false_input = verify_input();
+            if(false_input.equals("true")){//如果该输入的框都输入了那么就返回true
+                selectCommit();
+            }else{//否则返回false，并且提示输入
+                Dialog alertDialog = new AlertDialog.Builder(UserSelectRoom.this).
+                        setTitle("提示").
+                        setMessage(false_input).
+                        setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //确定按钮，点击可取消提示框
+                            }
+                        }).
+                        create();
+                alertDialog.show();
+            }
         }
     }
 
@@ -191,6 +210,7 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
     private void initData() {
         select_nameTv.setText("姓名："+sharedPreferences.getString("Name",null));
         select_idTv.setText("学号："+sharedPreferences.getString("userid",null));
+        querySex = sharedPreferences.getString("sexQuery",null);//获取到查询空床位的性别
 
         list = new ArrayList<Pickers>();
         id = new String[] { "1", "2", "3", "4"};
@@ -215,6 +235,67 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
         pickerscrollview_building.setSelected(0);
         bt_scrollNum_building.setText(name_building[0]);
         SelectBuilding = Integer.parseInt(id_building[0]);
+
+        //接收到消息以后在进行数据的初始化
+        building_handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                switch (msg.what){
+                    case 0:
+                        BedInfo bedInformation = (BedInfo) msg.obj;
+                        ArrayList list_id_building = new ArrayList();
+                        ArrayList list_name_building = new ArrayList();
+                        if(bedInformation.getQuery_5() != 0){
+                            list_id_building.add("5");
+                            list_name_building.add("5号楼");
+                        }
+                        if(bedInformation.getQuery_8() != 0){
+                            list_id_building.add("8");
+                            list_name_building.add("8号楼");
+                        }
+                        if(bedInformation.getQuery_9() != 0){
+                            list_id_building.add("9");
+                            list_name_building.add("9号楼");
+                        }
+                        if(bedInformation.getQuery_13() != 0){
+                            list_id_building.add("13");
+                            list_name_building.add("13号楼");
+                        }
+                        if(bedInformation.getQuery_14() != 0){
+                            list_id_building.add("14");
+                            list_name_building.add("14号楼");
+                        }
+                        int id_size = list_id_building.size();
+                        int name_size = list_name_building.size();
+                        String[] string_id_building = (String[])list_id_building.toArray(new String[id_size]);
+                        String[] string_name_building = (String[])list_name_building.toArray(new String[name_size]);
+                        List<Pickers> list_building_query = new ArrayList<Pickers>();
+                        for (int i = 0; i < string_name_building.length; i++) {
+                            list_building_query.add(new Pickers(string_name_building[i], string_id_building[i]));
+                        }
+                        // 设置数据，默认选择第一条
+                        pickerscrollview_building.setData(list_building_query);
+                        pickerscrollview_building.setSelected(0);
+                        bt_scrollNum_building.setText(string_name_building[0]);
+                        SelectBuilding = Integer.parseInt(string_id_building[0]);
+                        break;
+                    default:
+                        Dialog alertDialog = new AlertDialog.Builder(UserSelectRoom.this).
+                                setTitle("提示").
+                                setMessage("空床位信息请求失败").
+                                setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //确定按钮，点击可取消提示框
+                                    }
+                                }).
+                                create();
+                        alertDialog.show();
+                        break;
+                }
+            }
+        };
+        UpdateQueryBed(querySex);
     }
 
     // 办理入住人数控件监听器
@@ -238,6 +319,66 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
             bt_scrollNum_building.setText(pickers.getShowConetnt());
         }
     };
+
+    private void UpdateQueryBed(String querySex){
+        final String address = "https://api.mysspku.com/index.php/V1/MobileCourse/getRoom?gender="
+                +querySex;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpsURLConnection con = null;
+                try{
+                    URL url = new URL(address);
+                    //trustAllHosts函数用来给权限相信所有的网站证书
+                    MainActivity.trustAllHosts();
+                    con = (HttpsURLConnection)url.openConnection();
+                    con.setHostnameVerifier(DO_NOT_VERIFY);
+                    con.setRequestMethod("GET");
+                    con.setConnectTimeout(8000);
+                    con.setReadTimeout(8000);
+                    InputStream in = con.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String str;
+                    while ((str = reader.readLine()) != null) {
+                        response.append(str);
+                        Log.d("SelectRoom",str);
+                    }
+                    String responseStr = response.toString();
+                    Log.d("SelectRoom",responseStr);
+                    //获取json中的错误信息，以及数据信息
+                    int resultConInt = new JSONObject(responseStr).getInt("errcode");
+                    String resultCon = Integer.toString(resultConInt);
+                    Log.d("SelectRoom",resultCon);
+                    Message msg = new Message();
+                    if(resultConInt != 0){  //如果有错误，那么直接返回错误代码
+                        msg.what = 1;
+                        building_handler.sendMessage(msg);
+                        return;
+                    }else{
+                        JSONObject jsonObject1 = new JSONObject(responseStr).getJSONObject("data");
+                        BedInfo bedinformation = new BedInfo();
+                        bedinformation.setQuery_5(jsonObject1.getInt("5"));
+                        bedinformation.setQuery_8(jsonObject1.getInt("8"));
+                        bedinformation.setQuery_9(jsonObject1.getInt("9"));
+                        bedinformation.setQuery_13(jsonObject1.getInt("13"));
+                        bedinformation.setQuery_14(jsonObject1.getInt("14"));
+                        msg.what = 0;
+                        msg.obj = bedinformation;
+                        building_handler.sendMessage(msg);
+                        return;//如果返回的错误代码为0，说明登陆成功
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    if(con != null){
+                        con.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
 
     private void selectCommit(){
         new Thread(new Runnable() {
@@ -403,5 +544,36 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
                 //select_stu3_code_input.setText("");
                 break;
         }
+    }
+
+    private String verify_input(){
+        Log.d("SelectRoom","验证输入函数");
+        Log.d("SelectRoom",Integer.toString(select_stu1_id_input.getVisibility()));
+        Log.d("SelectRoom",Integer.toString(View.VISIBLE));
+        if(select_stu1_id_input.getVisibility() == View.VISIBLE){
+            Log.d("SelectRoom","验证输入函数1111");
+        }
+        if(select_stu1_id_input.getText().toString().equals("")){
+            Log.d("SelectRoom","验证输入函数2222");
+        }
+        if(select_stu1_id_input.getVisibility() == View.VISIBLE && select_stu1_id_input.getText().toString().equals("")){
+            return "请输入同住人1学号！";
+        }
+        if(select_stu1_code_input.getVisibility() == View.VISIBLE && select_stu1_code_input.getText().toString().equals("")){
+            return "请输入同住人1验证码！";
+        }
+        if(select_stu2_id_input.getVisibility() == View.VISIBLE && select_stu2_id_input.getText().toString().equals("")){
+            return "请输入同住人2学号！";
+        }
+        if(select_stu2_code_input.getVisibility() == View.VISIBLE && select_stu2_code_input.getText().toString().equals("")){
+            return "请输入同住人2验证码！";
+        }
+        if(select_stu3_id_input.getVisibility() == View.VISIBLE && select_stu3_id_input.getText().toString().equals("")){
+            return "请输入同住人3学号！";
+        }
+        if(select_stu3_code_input.getVisibility() == View.VISIBLE && select_stu3_code_input.getText().toString().equals("")){
+            return "请输入同住人3验证码！";
+        }
+        return "true";
     }
 }

@@ -83,7 +83,7 @@ public class UserInformation extends Activity implements View.OnClickListener{
                         NameShare = userinfo_Handler.getuName();
                         userSexTv = (TextView)findViewById(R.id.userinfo_information_sex);
                         userSexTv.setText("性    别："+userinfo_Handler.getuSex());
-                        if(userinfo_Handler.getuSex() == "男"){
+                        if(userinfo_Handler.getuSex().equals("男")){
                             sexQuery = "1";
                         }else{
                             sexQuery = "2";
