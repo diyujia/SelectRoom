@@ -51,6 +51,13 @@
             android:text="请点击按钮选择人数"
             android:layout_below="@id/select_num"
             android:layout_centerHorizontal="true"
+            android:background="@layout/button"
+            android:paddingBottom="8dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:paddingTop="8dp"
+            android:textColor="#ffffffff"
+            android:textSize="18sp"
             />
         <TextView
             android:id="@+id/select_building"
@@ -68,6 +75,13 @@
             android:text="请点击按钮入住楼号"
             android:layout_below="@id/select_building"
             android:layout_centerHorizontal="true"
+            android:background="@layout/button"
+            android:paddingBottom="8dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:paddingTop="8dp"
+            android:textColor="#ffffffff"
+            android:textSize="18sp"
             />
         <TextView
             android:id="@+id/select_stu1_id"
@@ -76,6 +90,7 @@
             android:text="同住人1学号："
             android:layout_below="@id/select_building_input"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:textSize="22.0sp"
             android:visibility="gone"/>
@@ -86,6 +101,7 @@
             android:hint="请输入学号！"
             android:inputType="numberSigned"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:layout_below="@id/select_stu1_id"
             android:visibility="gone"/>
@@ -96,6 +112,7 @@
             android:text="同住人1验证码："
             android:layout_below="@id/select_stu1_id_input"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:textSize="22.0sp"
             android:visibility="gone"/>
@@ -105,6 +122,7 @@
             android:layout_height="wrap_content"
             android:hint="请输入验证码！"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:layout_below="@id/select_stu1_code"
             android:visibility="gone"/>
@@ -115,6 +133,7 @@
             android:text="同住人2学号："
             android:layout_below="@id/select_stu1_code_input"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:textSize="22.0sp"
             android:visibility="gone"/>
@@ -125,6 +144,7 @@
             android:hint="请输入学号！"
             android:inputType="numberSigned"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:layout_below="@id/select_stu2_id"
             android:visibility="gone"/>
@@ -135,6 +155,7 @@
             android:text="同住人2验证码："
             android:layout_below="@id/select_stu2_id_input"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:textSize="22.0sp"
             android:visibility="gone"/>
@@ -144,6 +165,7 @@
             android:layout_height="wrap_content"
             android:hint="请输入验证码！"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:layout_below="@id/select_stu2_code"
             android:visibility="gone"/>
@@ -154,6 +176,7 @@
             android:text="同住人3学号："
             android:layout_below="@id/select_stu2_code_input"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:textSize="22.0sp"
             android:visibility="gone"/>
@@ -164,6 +187,7 @@
             android:hint="请输入学号！"
             android:inputType="numberSigned"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:layout_below="@id/select_stu3_id"
             android:visibility="gone"/>
@@ -174,6 +198,7 @@
             android:text="同住人3验证码："
             android:layout_below="@id/select_stu3_id_input"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:textSize="22.0sp"
             android:visibility="gone"/>
@@ -183,6 +208,7 @@
             android:layout_height="wrap_content"
             android:hint="请输入验证码！"
             android:layout_marginLeft="20.0dip"
+            android:layout_marginRight="20.0dp"
             android:layout_marginTop="2.0dp"
             android:layout_below="@id/select_stu3_code"
             android:visibility="gone"
@@ -194,6 +220,14 @@
             android:text="提交"
             android:layout_below="@id/select_stu3_code_input"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@layout/button"
+            android:paddingBottom="8dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:paddingTop="8dp"
+            android:textColor="#ffffffff"
+            android:textSize="18sp"
             />
     </RelativeLayout>
     </ScrollView>

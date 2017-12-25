@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">  -->
     <RelativeLayout
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -26,7 +30,7 @@
         android:orientation="horizontal"
         android:layout_below="@id/title"
         android:gravity="center">
-        <EditText
+        <!--<EditText
             android:layout_marginLeft="45.0dp"
             android:layout_marginRight="45.0dp"
             android:id="@+id/login_username"
@@ -34,8 +38,24 @@
             android:layout_height="wrap_content"
             android:hint="请输入学号！"
             android:inputType="numberSigned"
-            />
-        <EditText
+            />-->
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/login_layout_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45.0dp"
+            android:layout_marginRight="45.0dp"
+            app:passwordToggleEnabled="true"
+            >
+            <EditText
+                android:id="@+id/login_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="请输入学号！"
+                android:maxLines="1"
+                android:inputType="numberSigned" />
+        </android.support.design.widget.TextInputLayout>
+        <!--<EditText
             android:layout_marginLeft="45.0dp"
             android:layout_marginRight="45.0dp"
             android:id="@+id/login_password"
@@ -43,14 +63,40 @@
             android:layout_height="wrap_content"
             android:hint="请输入密码！"
             android:layout_below="@id/login_username"
-            />
+            android:inputType="textPassword">
+
+        </EditText>-->
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/login_layout_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45.0dp"
+            android:layout_marginRight="45.0dp"
+            android:layout_below="@id/login_layout_username"
+            app:passwordToggleEnabled="true"
+            >
+            <EditText
+                android:id="@+id/login_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="请输入密码！"
+                android:maxLines="1"
+                android:inputType="textPassword" />
+        </android.support.design.widget.TextInputLayout>
         <Button
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="登录"
-            android:layout_below="@id/login_password"
+            android:layout_below="@id/login_layout_password"
             android:layout_centerHorizontal="true"
+            android:background="@layout/button"
+            android:paddingBottom="8dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:paddingTop="8dp"
+            android:textColor="#ffffffff"
+            android:textSize="18sp"
             />
     </RelativeLayout>
 </RelativeLayout>

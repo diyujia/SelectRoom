@@ -12,6 +12,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.EditText;
@@ -82,6 +83,8 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
     private Button bt_commit;
     private Handler mHandler;
     private Handler building_handler;
+    private ImageView top_home_IV;  //返回首页按钮
+    private ImageView top_exit_IV;  //退出登录按钮
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -146,9 +149,9 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
         }else if(view.getId() == R.id.picker_yes_building){ //选择宿舍楼滚轮中的确定按钮，点击以后控件消失
             picker_rel_building.setVisibility(View.GONE);
         }else if(view.getId() == R.id.select_commit){
-            String false_input = verify_input();
+            String false_input = verify_input();   //verify_input这是一个函数用来验证所需要的输入框是否都有填写
             if(false_input.equals("true")){//如果该输入的框都输入了那么就返回true
-                selectCommit();
+                selectCommit();  //提交填写的内容
             }else{//否则返回false，并且提示输入
                 Dialog alertDialog = new AlertDialog.Builder(UserSelectRoom.this).
                         setTitle("提示").
@@ -162,6 +165,32 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
                         create();
                 alertDialog.show();
             }
+        }else if(view.getId() == R.id.usual_top_home){
+            Intent intent = new Intent();
+            intent.setClass(UserSelectRoom.this, UserInformation.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(view.getId() == R.id.usual_top_exit){
+            Dialog alertDialog = new AlertDialog.Builder(UserSelectRoom.this).
+                    setTitle("提示").
+                    setMessage("您确认要退出登录吗？").
+                    setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //确定按钮，点击可取消提示框
+                        }
+                    }).
+                    setPositiveButton("确定",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent();
+                            intent.setClass(UserSelectRoom.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
+                    }).
+                    create();
+            alertDialog.show();
         }
     }
 
@@ -196,6 +225,9 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
         select_stu3_code_input = (EditText) findViewById(R.id.select_stu3_code_input);
 
         bt_commit = (Button)findViewById(R.id.select_commit);
+        top_home_IV = (ImageView)findViewById(R.id.usual_top_home);
+        top_exit_IV = (ImageView)findViewById(R.id.usual_top_exit);
+
     }
     private void initLinstener() {
         bt_scrollNum.setOnClickListener(this);
@@ -206,6 +238,8 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
         pickerscrollview_building.setOnSelectListener(pickerListener_building);
         bt_yes_building.setOnClickListener(this);
         bt_commit.setOnClickListener(this);
+        top_home_IV.setOnClickListener(this);
+        top_exit_IV.setOnClickListener(this);
     }
     private void initData() {
         select_nameTv.setText("姓名："+sharedPreferences.getString("Name",null));

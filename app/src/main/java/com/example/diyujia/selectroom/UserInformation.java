@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ public class UserInformation extends Activity implements View.OnClickListener{
     private Button bSelect;
     private String sexQuery;//用来标志性别，查询空床位
     private String NameShare;//用来存储办理入住人名称，方便显示
-
+    private ImageView top_exit_IV;//退出登录按钮
     private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -60,6 +61,8 @@ public class UserInformation extends Activity implements View.OnClickListener{
         bQuery.setOnClickListener(this);
         bSelect = (Button)findViewById(R.id.userinfo_information_select);
         bSelect.setOnClickListener(this);
+        top_exit_IV = (ImageView)findViewById(R.id.usual_top_exit);
+        top_exit_IV.setOnClickListener(this);
         //获取主页面保存的userid信息
         sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
         //SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
@@ -150,8 +153,7 @@ public class UserInformation extends Activity implements View.OnClickListener{
             }else{//如果网络连接不正常则显示“网络挂了”
                 Toast.makeText(UserInformation.this,"网络挂了！",Toast.LENGTH_LONG).show();
             }
-        }
-        if(view.getId() == R.id.userinfo_information_select){
+        }else if(view.getId() == R.id.userinfo_information_select){
             if(NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE){
                 Log.d("SelectRoom","办理入住按钮");
                 //调用UserLogin函数，请求登录的接口。
@@ -175,6 +177,27 @@ public class UserInformation extends Activity implements View.OnClickListener{
             }else{//如果网络连接不正常则显示“网络挂了”
                 Toast.makeText(UserInformation.this,"网络挂了！",Toast.LENGTH_LONG).show();
             }
+        }else if(view.getId() == R.id.usual_top_exit){
+            Dialog alertDialog = new AlertDialog.Builder(UserInformation.this).
+                    setTitle("提示").
+                    setMessage("您确认要退出登录吗？").
+                    setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //确定按钮，点击可取消提示框
+                        }
+                    }).
+                    setPositiveButton("确定",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent();
+                            intent.setClass(UserInformation.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
+                    }).
+                    create();
+            alertDialog.show();
         }
     }
     /**

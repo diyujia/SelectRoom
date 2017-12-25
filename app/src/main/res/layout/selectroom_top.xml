@@ -7,24 +7,27 @@
         android:id="@+id/usual_top"
         android:layout_width="match_parent"
         android:layout_height="45.0dp"
-        android:background="#ffcd2626"
-        android:gravity="center_vertical">
-        
+        android:background="#f92a3f"
+        android:gravity="center_vertical"
+        android:paddingTop="5dp">
         <ImageView
-            android:id="@+id/usual_top_return"
-            android:layout_width="40.0dp"
-            android:layout_height="40.0dp"
-            android:src="@drawable/top_return"
-            android:layout_marginTop="2.0dp"
-            android:layout_marginLeft="2.0dp"/>
+            android:id="@+id/usual_top_home"
+            android:layout_width="30.0dp"
+            android:layout_height="30.0dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/top_home"
+            android:visibility="visible"
+            android:layout_marginTop="2.0dp"/>
+
         <ImageView
             android:id="@+id/usual_top_seperator"
             android:layout_width="1.0dp"
             android:layout_height="40dip"
             android:layout_marginTop="2.0dp"
             android:layout_marginLeft="2.0dp"
-            android:layout_toRightOf="@id/usual_top_return"
-            android:background="#A71717"/>
+            android:layout_toRightOf="@id/usual_top_home"
+            android:background="#f92a3f"/>
         <TextView
             android:id="@+id/usual_top_name"
             android:layout_width="match_parent"
@@ -35,21 +38,14 @@
             android:text="北大软件与微电子学院"
             android:textColor="#ffffffff"
             android:textSize="22.0sp"/>
-        <ImageView
-            android:id="@+id/usual_top_home"
-            android:layout_width="40.0dp"
-            android:layout_height="40.0dp"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/top_home"
-            android:visibility="visible"
-            android:layout_marginTop="2.0dp"/>
+
         <ImageView
             android:id="@+id/usual_top_exit"
-            android:layout_width="40.0dp"
-            android:layout_height="40.0dp"
-            android:layout_toLeftOf="@id/usual_top_home"
+            android:layout_width="30.0dp"
+            android:layout_height="30.0dp"
             android:src="@drawable/top_exit"
+            android:layout_alignParentRight="true"
             android:layout_marginTop="2.0dp"
-            android:layout_marginRight="2.0dp"/>
+            android:layout_marginRight="5.0dp"/>
     </RelativeLayout>
 </RelativeLayout>

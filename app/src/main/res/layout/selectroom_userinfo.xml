@@ -100,6 +100,14 @@
             android:layout_below="@id/userinfo_information_room"
             android:layout_centerHorizontal="true"
             android:layout_toLeftOf="@id/userinfo_information_seperate"
+            android:layout_marginTop="20dp"
+            android:background="@layout/button"
+            android:paddingBottom="8dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:paddingTop="8dp"
+            android:textColor="#ffffffff"
+            android:textSize="18sp"
             />
 
         <Button
@@ -110,6 +118,14 @@
             android:layout_below="@id/userinfo_information_room"
             android:layout_centerHorizontal="true"
             android:layout_toRightOf="@id/userinfo_information_seperate"
+            android:layout_marginTop="20dp"
+            android:background="@layout/button"
+            android:paddingBottom="8dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:paddingTop="8dp"
+            android:textColor="#ffffffff"
+            android:textSize="18sp"
             />
     </RelativeLayout>
 

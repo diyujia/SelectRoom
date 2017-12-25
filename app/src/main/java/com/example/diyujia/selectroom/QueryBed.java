@@ -12,6 +12,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,8 @@ public class QueryBed extends Activity implements View.OnClickListener{
     private TextView query_9Tv;
     private TextView query_13Tv;
     private TextView query_14Tv;
+    private ImageView top_home_IV;
+    private ImageView top_exit_IV;
 
     private SharedPreferences sharedPreferences;
     @Override
@@ -52,6 +55,10 @@ public class QueryBed extends Activity implements View.OnClickListener{
         sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
         bSelect = (Button)findViewById(R.id.querybed_select);
         bSelect.setOnClickListener(this);
+        top_home_IV = (ImageView)findViewById(R.id.usual_top_home);
+        top_home_IV.setOnClickListener(this);
+        top_exit_IV = (ImageView)findViewById(R.id.usual_top_exit);
+        top_exit_IV.setOnClickListener(this);
         //SharedPreferences sharedPreferences = getSharedPreferences("selectroom",MODE_PRIVATE);
         String userid = sharedPreferences.getString("userid",null);
         String querySex = sharedPreferences.getString("sexQuery",null);//获取到查询空床位的性别
@@ -122,6 +129,32 @@ public class QueryBed extends Activity implements View.OnClickListener{
             }else{//如果网络连接不正常则显示“网络挂了”
                 Toast.makeText(QueryBed.this,"网络挂了！",Toast.LENGTH_LONG).show();
             }
+        }else if(view.getId() == R.id.usual_top_home){
+            Intent intent = new Intent();
+            intent.setClass(QueryBed.this, UserInformation.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(view.getId() == R.id.usual_top_exit){
+            Dialog alertDialog = new AlertDialog.Builder(QueryBed.this).
+                    setTitle("提示").
+                    setMessage("您确认要退出登录吗？").
+                    setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //确定按钮，点击可取消提示框
+                        }
+                    }).
+                    setPositiveButton("确定",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent();
+                            intent.setClass(QueryBed.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
+                    }).
+                    create();
+            alertDialog.show();
         }
     }
 
