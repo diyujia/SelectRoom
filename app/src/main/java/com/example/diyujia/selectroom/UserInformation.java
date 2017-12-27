@@ -130,6 +130,7 @@ public class UserInformation extends Activity implements View.OnClickListener{
                                         //确定按钮，点击可取消提示框
                                     }
                                 }).
+                                setCancelable(false).
                                 create();
                         alertDialog.show();
                         break;
@@ -170,6 +171,7 @@ public class UserInformation extends Activity implements View.OnClickListener{
                                     //确定按钮，点击可取消提示框
                                 }
                             }).
+                            setCancelable(false).
                             create();
                     alertDialog.show();
                 }
@@ -196,6 +198,7 @@ public class UserInformation extends Activity implements View.OnClickListener{
                             startActivity(intent);
                         }
                     }).
+                    setCancelable(false).
                     create();
             alertDialog.show();
         }

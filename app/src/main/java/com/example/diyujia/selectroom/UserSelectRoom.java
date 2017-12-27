@@ -114,6 +114,7 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
                                         startActivity(intent);
                                     }
                                 }).
+                                setCancelable(false).
                                 create();
                         alertDialog1.show();
                         break;
@@ -127,6 +128,7 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
                                         //确定按钮，点击可取消提示框
                                     }
                                 }).
+                                setCancelable(false).
                                 create();
                         alertDialog.show();
                         break;
@@ -162,6 +164,7 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
                                 //确定按钮，点击可取消提示框
                             }
                         }).
+                        setCancelable(false).
                         create();
                 alertDialog.show();
             }
@@ -189,6 +192,7 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
                             startActivity(intent);
                         }
                     }).
+                    setCancelable(false).
                     create();
             alertDialog.show();
         }
@@ -227,7 +231,6 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
         bt_commit = (Button)findViewById(R.id.select_commit);
         top_home_IV = (ImageView)findViewById(R.id.usual_top_home);
         top_exit_IV = (ImageView)findViewById(R.id.usual_top_exit);
-
     }
     private void initLinstener() {
         bt_scrollNum.setOnClickListener(this);
@@ -323,6 +326,7 @@ public class UserSelectRoom extends Activity implements View.OnClickListener{
                                         //确定按钮，点击可取消提示框
                                     }
                                 }).
+                                setCancelable(false).
                                 create();
                         alertDialog.show();
                         break;
